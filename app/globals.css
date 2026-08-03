@@ -55,4 +55,18 @@ header>a{flex-basis:100px;width:100px;height:60px}header>a img{width:140px;heigh
 /* Consistent leading keeps every display-heading line clear and readable. */
 .hero h1,.section h2,.assembly h2,.offer h2,.newsletter h2{line-height:.98}
 @media(max-width:600px){.hero h1,.section h2,.assembly h2,.offer h2,.newsletter h2{line-height:1}}
+@media(max-width:600px){
+  .menu-section,.social,.order{position:relative}
+  .menu-section:before,.social:before,.order:before{content:"";position:absolute;left:16px;right:16px;top:0;height:1px;background:linear-gradient(90deg,transparent,#a91f1740,transparent)}
+  .product,.favorite-row article,.review-grid article,.steps article{box-shadow:0 14px 34px #5e160d12;border:1px solid #a91f171c}
+  .product{scroll-snap-stop:always}.product-grid,.favorite-row{overscroll-behavior-x:contain}
+  .product strong{font-size:13px;box-shadow:0 5px 12px #f9b51540}.product>div:nth-of-type(2){gap:10px}.product>div:nth-of-type(2) button{min-width:88px;justify-content:center}
+  .steps article{display:grid;grid-template-columns:52px 1fr;align-items:center;text-align:left;gap:14px}.steps article>span{top:10px;left:12px}.steps svg{margin:0;width:52px}.steps h3{margin:0}
+  .review-grid article{background:rgba(255,253,248,.94)}
+  .gallery>div:nth-child(3){grid-column:span 2}.gallery>div:nth-child(3) img{object-position:center 42%}
+  footer{border-radius:28px 28px 0 0}
+  .floating-order{left:10px;right:10px;bottom:max(10px,env(safe-area-inset-bottom));width:auto;display:grid;grid-template-columns:1.15fr 1fr;gap:8px;padding:7px;background:rgba(255,244,231,.96);border:1px solid #a91f1720;border-radius:22px;box-shadow:0 14px 42px #17171738;backdrop-filter:blur(16px)}
+  .floating-order button,.floating-order a:last-child{width:100%!important;height:52px!important;border:0;border-radius:16px;padding:0 14px;justify-content:center;box-shadow:none;font-size:12px}
+  .floating-order button{background:var(--red)}.floating-order button span{display:inline}.floating-order a:last-child{background:#168c52}.floating-order a:last-child b{display:none}.floating-order a:last-child span{display:inline}
+}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
