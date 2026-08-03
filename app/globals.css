@@ -89,4 +89,5 @@ footer>img{width:190px;height:145px;background:transparent;border-radius:0;objec
   .map-pin-card{bottom:14px;min-width:190px;padding:10px 14px}
 }
 @media(max-width:340px){.locations .hero-buttons{grid-template-columns:1fr}}
+.whatsapp-icon{width:24px;height:24px;object-fit:contain;flex:0 0 auto}.floating-order .whatsapp-icon{width:30px;height:30px}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
