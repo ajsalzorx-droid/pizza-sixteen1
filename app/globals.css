@@ -65,9 +65,9 @@ header>a{flex-basis:100px;width:100px;height:60px}header>a img{width:140px;heigh
   .review-grid article{background:rgba(255,253,248,.94)}
   .gallery>div:nth-child(3){grid-column:span 2}.gallery>div:nth-child(3) img{object-position:center 42%}
   footer{border-radius:28px 28px 0 0}
-  .floating-order{left:10px;right:10px;bottom:max(10px,env(safe-area-inset-bottom));width:auto;display:grid;grid-template-columns:1.15fr 1fr;gap:8px;padding:7px;background:rgba(255,244,231,.96);border:1px solid #a91f1720;border-radius:22px;box-shadow:0 14px 42px #17171738;backdrop-filter:blur(16px)}
+  .floating-order{left:10px;right:10px;bottom:max(10px,env(safe-area-inset-bottom));width:auto;display:grid;grid-template-columns:1fr 52px;gap:8px;padding:7px;background:rgba(255,244,231,.96);border:1px solid #a91f1720;border-radius:22px;box-shadow:0 14px 42px #17171738;backdrop-filter:blur(16px)}
   .floating-order button,.floating-order a:last-child{width:100%!important;height:52px!important;border:0;border-radius:16px;padding:0 14px;justify-content:center;box-shadow:none;font-size:12px}
-  .floating-order button{background:var(--red)}.floating-order button span{display:inline}.floating-order a:last-child{background:#168c52}.floating-order a:last-child b{display:none}.floating-order a:last-child span{display:inline}
+  .floating-order button{background:var(--red)}.floating-order button span{display:inline}.floating-order a:last-child{background:#168c52;padding:0!important;border-radius:50%}
 }
 footer>img{width:190px;height:145px;background:transparent;border-radius:0;object-fit:contain}
 @media(max-width:600px){footer>img{width:165px;height:128px}}
@@ -89,5 +89,5 @@ footer>img{width:190px;height:145px;background:transparent;border-radius:0;objec
   .map-pin-card{bottom:14px;min-width:190px;padding:10px 14px}
 }
 @media(max-width:340px){.locations .hero-buttons{grid-template-columns:1fr}}
-.whatsapp-icon{width:24px;height:24px;object-fit:contain;flex:0 0 auto}.floating-order .whatsapp-icon{width:30px;height:30px}
+.whatsapp-icon{width:24px;height:24px;object-fit:contain;flex:0 0 auto}.floating-order .whatsapp-icon{width:28px;height:28px}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
