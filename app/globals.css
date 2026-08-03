@@ -22,4 +22,34 @@ header{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:100;w
 header>a{position:relative;display:block;flex:0 0 120px;width:120px;height:64px;overflow:hidden}
 header>a img{position:absolute;left:0;top:0;width:160px;height:160px;max-width:none;object-fit:contain;transform:translate(-20px,-48px) scale(1.25);transform-origin:center}
 @media(max-width:600px){header>a{flex-basis:105px;width:105px;height:56px}header>a img{width:145px;height:145px;transform:translate(-20px,-44px) scale(1.2)}}
+@media(max-width:600px){
+  body{font-size:15px}
+  header{width:calc(100% - 20px);padding:5px 7px 5px 10px;border-radius:18px;background:rgba(255,244,231,.94);box-shadow:0 8px 28px #6f17151a;backdrop-filter:blur(12px)}
+  header>a{flex-basis:88px;width:88px;height:54px}header>a img{width:136px;height:136px;transform:translate(-24px,-41px) scale(1.18)}
+  .nav-actions{gap:6px}.cart-trigger,.menu-button{width:44px;height:44px;min-width:44px}.cart-trigger span{right:-2px;top:-3px}
+  .mobile-menu{padding:18px 20px 32px}.mobile-menu>a{font-size:clamp(3rem,15vw,4.8rem);line-height:1.03;margin-bottom:4px}.mobile-menu>img:not(.menu-pizza){width:135px;height:95px}.mobile-menu .menu-pizza{width:300px;height:390px;right:-100px;bottom:-100px}
+  .hero{min-height:auto;padding:105px 16px 42px}.hero-copy{width:100%;min-width:0;max-width:100%;overflow:hidden}.hero .eyebrow{margin-bottom:12px}.hero h1{width:100%;font-size:clamp(3.15rem,15.8vw,4.5rem);line-height:.86;letter-spacing:-.015em}.hero .intro{font-size:15px;line-height:1.55;margin:18px auto;max-width:340px}.hero-buttons{width:100%;gap:9px}.hero-buttons .button{width:100%;max-width:100%;min-height:50px}.hero small{font-size:11px;margin-top:14px}.hero-art{margin-top:18px;min-height:330px}.hero-art>div{width:105vw}.hero-art:after{right:0}.blob{width:86%}.badge{right:0;bottom:4%;width:68px}
+  .ticker{transform:none}.marquee{padding:10px 0}.marquee.reverse{padding:7px 0}
+  .section{padding:72px 16px}.section-head{text-align:left}.section-head .eyebrow{margin-bottom:12px}.section h2{font-size:clamp(3.15rem,15.3vw,4.7rem);line-height:.86}.section-head>p:last-child{font-size:15px}.tabs{margin:28px -16px 20px;padding:4px 16px;scrollbar-width:none}.tabs::-webkit-scrollbar,.product-grid::-webkit-scrollbar,.favorite-row::-webkit-scrollbar{display:none}.tabs button{min-height:44px}
+  .product-grid{gap:12px;padding-right:16px}.product{flex-basis:82vw;max-width:340px;border-radius:22px;padding:15px}.pizza-frame{border-radius:17px}.product h3{font-size:27px;margin-top:16px}.product p{font-size:13px;line-height:1.5;min-height:58px}.product button{min-height:44px}.tag{right:22px;top:22px}
+  .assembly{min-height:auto;padding:72px 16px}.assembly h2{font-size:clamp(3.4rem,16vw,4.8rem);line-height:.86}.assembly-pizza{margin:20px -14px 6px}.ingredient-list{gap:0;text-align:left}.ingredient-list span{padding:12px 4px}
+  .split{gap:34px}.split>div:first-child>p:not(.eyebrow),.split>div:last-child>p:not(.eyebrow){font-size:15px;line-height:1.65}.values{gap:7px;margin:20px 0}.values b{padding:10px 12px}.box-photo img{box-shadow:8px 8px 0 var(--yellow)}
+  .benefits{padding:35px 0}.benefits .marquee,.benefits .reverse{font-size:2.7rem}
+  .favorite-row{gap:12px;margin-right:-16px;padding:30px 16px 6px 0}.favorite-row article{flex-basis:82vw;max-width:340px;padding:18px;border-radius:22px}.favorite-row h3{font-size:27px}.favorite-row p{font-size:13px;line-height:1.5}
+  .offer{padding:68px 16px 36px}.offer h2{font-size:clamp(3.15rem,15vw,4.55rem);line-height:.87}.offer>div:first-child>p:not(.eyebrow){font-size:15px}.offer .button{width:100%}.offer-image{margin-top:5px}.offer-image img{height:390px;width:112%;margin-left:-6%}.offer-image b{top:10%;right:0;width:88px;font-size:25px}
+  .packaging{display:flex;flex-direction:column}.packaging .box-photo{order:2}.packaging>div:last-child{order:1}
+  .steps{gap:10px;margin:32px auto}.steps article{padding:28px 20px}.steps h3{font-size:25px;margin-bottom:0}.order-actions{width:100%;gap:9px}.order-actions>*{width:100%}.contact-line{font-size:13px;line-height:1.6}
+  .review-grid{gap:10px!important;margin-top:30px}.review-grid article{padding:24px;border-radius:20px}blockquote{font-size:17px;margin:18px 0}
+  .gallery{gap:8px;margin:30px auto 22px;grid-template-rows:170px 170px 170px}.gallery>div{border-radius:15px}.social>.button{width:100%}
+  .locations{gap:36px}.locations .hero-buttons{align-items:stretch}.map{border-radius:34% 66% 52% 48%;min-height:290px}.map b{font-size:42px}
+  .newsletter{padding:60px 16px;gap:28px}.newsletter h2{font-size:clamp(3.4rem,16vw,4.8rem);line-height:.86}.newsletter p{line-height:1.55}.newsletter button{min-height:54px;font-size:12px}
+  footer{gap:22px;padding-bottom:100px}footer img{width:140px;height:96px}footer p{line-height:1.7;margin:5px 0}footer small{line-height:1.6}
+  .floating-order{right:12px;bottom:12px;flex-direction:row-reverse;align-items:center}.floating-order a:last-child,.floating-order button:first-child{width:52px;height:52px}
+  .cart-drawer{width:100%;padding:16px 16px max(18px,env(safe-area-inset-bottom))}.cart-head{padding-bottom:14px}.cart-head h2{font-size:40px}.cart-items article{grid-template-columns:64px 1fr auto;gap:10px;padding:12px 0}.cart-items article>img{width:64px;height:64px}.cart-items h3{font-size:14px}.cart-summary{padding-top:14px}.cart-summary .button{min-height:52px;font-size:12px}.call-order{min-height:44px;align-items:center}
+}
+@media(max-width:600px){.hero{grid-template-columns:minmax(0,1fr)}.hero-copy,.hero h1,.hero-buttons{width:calc(100vw - 32px);max-width:calc(100vw - 32px)}}
+@media(max-width:360px){header>a{flex-basis:76px;width:76px}.hero h1{font-size:3.1rem}.product{flex-basis:88vw}.favorite-row article{flex-basis:88vw}.cart-drawer{padding-inline:12px}}
+/* Balanced brand size after cropping the whitespace in the original logo canvas. */
+header>a{flex-basis:100px;width:100px;height:60px}header>a img{width:140px;height:140px;transform:translate(-20px,-42px) scale(1)}
+@media(max-width:600px){header>a{flex-basis:78px;width:78px;height:52px}header>a img{width:120px;height:120px;transform:translate(-21px,-36px) scale(1)}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
