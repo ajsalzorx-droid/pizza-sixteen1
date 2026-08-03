@@ -69,4 +69,5 @@ header>a{flex-basis:100px;width:100px;height:60px}header>a img{width:140px;heigh
   .floating-order button,.floating-order a:last-child{width:100%!important;height:52px!important;border:0;border-radius:16px;padding:0 14px;justify-content:center;box-shadow:none;font-size:12px}
   .floating-order button{background:var(--red)}.floating-order button span{display:inline}.floating-order a:last-child{background:#168c52}.floating-order a:last-child b{display:none}.floating-order a:last-child span{display:inline}
 }
+footer>img{background:transparent;border-radius:0}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
