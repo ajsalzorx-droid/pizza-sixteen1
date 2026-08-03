@@ -52,4 +52,7 @@ header>a img{position:absolute;left:0;top:0;width:160px;height:160px;max-width:n
 /* Balanced brand size after cropping the whitespace in the original logo canvas. */
 header>a{flex-basis:100px;width:100px;height:60px}header>a img{width:140px;height:140px;transform:translate(-20px,-42px) scale(1)}
 @media(max-width:600px){header>a{flex-basis:78px;width:78px;height:52px}header>a img{width:120px;height:120px;transform:translate(-21px,-36px) scale(1)}}
+/* Consistent leading keeps every display-heading line clear and readable. */
+.hero h1,.section h2,.assembly h2,.offer h2,.newsletter h2{line-height:.98}
+@media(max-width:600px){.hero h1,.section h2,.assembly h2,.offer h2,.newsletter h2{line-height:1}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
