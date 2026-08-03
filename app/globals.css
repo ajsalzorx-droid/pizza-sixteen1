@@ -70,4 +70,20 @@ header>a{flex-basis:100px;width:100px;height:60px}header>a img{width:140px;heigh
   .floating-order button{background:var(--red)}.floating-order button span{display:inline}.floating-order a:last-child{background:#168c52}.floating-order a:last-child b{display:none}.floating-order a:last-child span{display:inline}
 }
 footer>img{background:transparent;border-radius:0}
+@media(max-width:900px){
+  .locations{gap:48px;text-align:center}
+  .locations>div:first-child{width:100%;max-width:700px;margin:0 auto}
+  .locations .eyebrow{text-align:center}
+  .locations h2{font-size:clamp(3.5rem,10vw,6rem);line-height:.98;text-wrap:balance}
+  .locations>div:first-child>p:not(.eyebrow){font-size:16px;line-height:1.7;margin:24px auto 0}
+  .locations .hero-buttons{display:grid;grid-template-columns:1fr 1fr;width:min(100%,520px);max-width:520px;margin:26px auto 0;gap:12px}
+  .locations .hero-buttons .button{width:100%;padding-inline:14px}
+  .locations .map{width:min(100%,640px);margin:0 auto}
+}
+@media(max-width:430px){
+  .locations h2{font-size:clamp(3.1rem,13vw,3.7rem)}
+  .locations>div:first-child>p:not(.eyebrow){font-size:14px}
+  .locations .hero-buttons{gap:8px}.locations .hero-buttons .button{font-size:11px;padding-inline:8px}
+}
+@media(max-width:340px){.locations .hero-buttons{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
