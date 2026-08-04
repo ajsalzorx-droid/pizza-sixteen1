@@ -35,7 +35,9 @@ export default function Home() {
   const [cartOpen, setCartOpen] = useState(false);
   const [cart, setCart] = useState<Record<string, number>>({});
   const [sliderPaused, setSliderPaused] = useState(false);
+  const [favoritesPaused, setFavoritesPaused] = useState(false);
   const productSlider = useRef<HTMLDivElement>(null);
+  const favoritesSlider = useRef<HTMLDivElement>(null);
 
   const cartItems = products.filter(p => cart[p[0]]).map(p => ({ product: p, quantity: cart[p[0]] }));
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
@@ -73,6 +75,25 @@ export default function Home() {
     }, 3800);
     return () => window.clearInterval(timer);
   }, [sliderPaused]);
+
+  const slideFavorites = (direction: 1 | -1) => {
+    const slider = favoritesSlider.current;
+    const card = slider?.querySelector<HTMLElement>("article");
+    if (!slider || !card) return;
+    slider.scrollBy({ left: direction * (card.offsetWidth + 22), behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    if (favoritesPaused || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const timer = window.setInterval(() => {
+      const slider = favoritesSlider.current;
+      if (!slider) return;
+      const atEnd = slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - 12;
+      if (atEnd) slider.scrollTo({ left: 0, behavior: "smooth" });
+      else slideFavorites(1);
+    }, 4200);
+    return () => window.clearInterval(timer);
+  }, [favoritesPaused]);
 
   return <main>
     <AnimatePresence>{!loaded && <motion.div className="loader" exit={{ y: "-100%" }} transition={{ duration: .7, ease: [0.76,0,0.24,1] }}>
@@ -134,7 +155,7 @@ export default function Home() {
 
     <div className="benefits"><Marquee>FRESH INGREDIENTS ✦ FRESH INGREDIENTS ✦ </Marquee><Marquee reverse>HOT FROM THE OVEN ✦ HOT FROM THE OVEN ✦ </Marquee><Marquee>DELIVERED FAST ✦ DELIVERED FAST ✦ </Marquee></div>
 
-    <section className="favorites section"><motion.div {...reveal} className="section-head"><p className="eyebrow">THE BESTSELLERS</p><h2>THE SIXTEEN<br/><em>FAVOURITES.</em></h2></motion.div><div className="favorite-row">{products.slice(0,5).map((p,i)=><article key={p[0]}><span>0{i+1}/05</span><Image src="/images/pizza-full.png" alt={p[0]} width={500} height={500}/><h3>{p[0]}</h3><p>{p[1]}</p><a className="button small" href="#order">Order {p[2]}</a></article>)}</div></section>
+    <section className="favorites section"><motion.div {...reveal} className="section-head"><p className="eyebrow">THE BESTSELLERS</p><h2>THE SIXTEEN<br/><em>FAVOURITES.</em></h2></motion.div><div className="slider-toolbar favorites-toolbar"><span>Slide through the favourites</span><div><button aria-label="Previous favourites" onClick={() => slideFavorites(-1)}><ChevronLeft/></button><button aria-label="Next favourites" onClick={() => slideFavorites(1)}><ChevronRight/></button></div></div><div className="favorite-row" ref={favoritesSlider} onPointerEnter={() => setFavoritesPaused(true)} onPointerLeave={() => setFavoritesPaused(false)} onFocusCapture={() => setFavoritesPaused(true)} onBlurCapture={() => setFavoritesPaused(false)}>{products.slice(0,5).map((p,i)=><motion.article initial={{opacity:0,x:90,rotate:1.5}} whileInView={{opacity:1,x:0,rotate:0}} viewport={{once:true,amount:.2}} transition={{duration:.6,delay:Math.min(i*.08,.28)}} key={p[0]}><span>0{i+1}/05</span><Image src="/images/pizza-full.png" alt={p[0]} width={500} height={500}/><h3>{p[0]}</h3><p>{p[1]}</p><a className="button small" href="#order">Order {p[2]}</a></motion.article>)}</div></section>
 
     <section className="offer" id="offers"><motion.div {...reveal}><p className="eyebrow">THIS WEEK’S BIG DEAL</p><h2>BUY 1 LARGE,<br/>GET THE SECOND<br/><em>50% OFF.</em></h2><p>Double the pizza. Double the good times.</p><a className="button light" href="#order">Get the offer <ArrowUpRight/></a><small>Equal or lower-priced pizza only. Terms apply.</small></motion.div><motion.div className="offer-image" whileInView={{y:-30,rotate:4}} transition={{duration:1}}><Image src="/images/pizza-floating.png" alt="Pizza Sixteen offer" width={750} height={900}/><b>50%<br/>OFF</b></motion.div></section>
 
