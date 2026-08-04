@@ -51,10 +51,21 @@ export default function Home() {
   const whatsAppOrder = `https://wa.me/971543962660?text=${encodeURIComponent(`Hello Pizza Sixteen! I'd like to order:\n${cartItems.map(({product, quantity}) => `${quantity}x ${product[0]} — ${product[2]}`).join("\n")}\n\nTotal: AED ${cartTotal}`)}`;
 
   useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    const previousRestoration = window.history.scrollRestoration;
+    window.history.scrollRestoration = "manual";
+    document.body.style.overflow = "hidden";
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    setScrolled(false);
     const timer = setTimeout(() => setLoaded(true), 1500);
     const onScroll = () => setScrolled(window.scrollY > 80);
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => { clearTimeout(timer); window.removeEventListener("scroll", onScroll); };
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("scroll", onScroll);
+      document.body.style.overflow = previousOverflow;
+      window.history.scrollRestoration = previousRestoration;
+    };
   }, []);
 
   const slideProducts = (direction: 1 | -1) => {
@@ -96,7 +107,7 @@ export default function Home() {
   }, [favoritesPaused]);
 
   return <main>
-    <AnimatePresence>{!loaded && <motion.div className="loader" exit={{ y: "-100%" }} transition={{ duration: .7, ease: [0.76,0,0.24,1] }}>
+    <AnimatePresence onExitComplete={() => { document.body.style.overflow = ""; window.scrollTo({top:0,left:0,behavior:"auto"}) }}>{!loaded && <motion.div className="loader" exit={{ y: "-100%" }} transition={{ duration: .7, ease: [0.76,0,0.24,1] }}>
       <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity, ease: "linear" }} className="loader-pizza"><Pizza /></motion.div>
       <Image src="/images/pizza-sixteen-logo.png" alt="Pizza Sixteen" width={240} height={240} priority />
       <strong>HEATING THE OVEN...</strong><div className="loadbar"><i /></div>
@@ -123,7 +134,7 @@ export default function Home() {
       <Image className="menu-pizza" src="/images/pizza-floating.png" alt="Floating pizza" width={320} height={420}/>
     </motion.aside>}</AnimatePresence>
 
-    <section className="hero" id="home">
+    <motion.section className="hero" id="home" initial={{opacity:0,y:24}} animate={loaded ? {opacity:1,y:0} : {opacity:0,y:24}} transition={{duration:.7,delay:.18,ease:[.22,1,.36,1]}}>
       <div className="hero-copy">
         <motion.p initial={{opacity:0}} animate={{opacity:1}} transition={{delay:1.6}} className="eyebrow">HOT • FRESH • CHEESY</motion.p>
         <motion.h1 initial="hidden" animate={loaded ? "show" : "hidden"} variants={{hidden:{},show:{transition:{staggerChildren:.12}}}}>{["PIZZA MADE","FOR BIG","CRAVINGS."].map(line => <motion.span key={line} variants={{hidden:{y:80,opacity:0},show:{y:0,opacity:1}}}>{line}</motion.span>)}</motion.h1>
@@ -132,7 +143,7 @@ export default function Home() {
         <small>Fresh from the oven. Delivered to your door.</small>
       </div>
       <div className="hero-art"><i className="blob"/><motion.div animate={{ y:[0,-12,0], rotate:[-3,1,-3] }} transition={{duration:5,repeat:Infinity,ease:"easeInOut"}}><Image src="/images/pizza-full.png" alt="Fresh Pizza Sixteen pizza" width={900} height={900} priority /></motion.div><b className="badge">BAKED<br/>FRESH</b></div>
-    </section>
+    </motion.section>
 
     <div className="ticker"><Marquee>HOT ✦ FRESH ✦ CHEESY ✦ MADE FOR EVERYONE ✦ PIZZA SIXTEEN ✦ </Marquee><Marquee reverse>BAKED FRESH • BIG FLAVOUR • FAST DELIVERY • GOOD TIMES • </Marquee></div>
 
