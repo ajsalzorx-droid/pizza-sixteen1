@@ -1,9 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowUpRight, Camera, ChevronRight, MapPin, Menu, Minus, Phone, Pizza, Plus, ShoppingBag, Star, Trash2, X } from "lucide-react";
+import { ArrowUpRight, Camera, ChevronLeft, ChevronRight, MapPin, Menu, Minus, Phone, Pizza, Plus, ShoppingBag, Star, Trash2, X } from "lucide-react";
 
 const products = [
   ["Sixteen Special", "Pepperoni, mozzarella, olives, green peppers and signature sauce.", "AED 49", "Signature"],
@@ -34,6 +34,8 @@ export default function Home() {
   const [joined, setJoined] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [cart, setCart] = useState<Record<string, number>>({});
+  const [sliderPaused, setSliderPaused] = useState(false);
+  const productSlider = useRef<HTMLDivElement>(null);
 
   const cartItems = products.filter(p => cart[p[0]]).map(p => ({ product: p, quantity: cart[p[0]] }));
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
@@ -52,6 +54,25 @@ export default function Home() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => { clearTimeout(timer); window.removeEventListener("scroll", onScroll); };
   }, []);
+
+  const slideProducts = (direction: 1 | -1) => {
+    const slider = productSlider.current;
+    const card = slider?.querySelector<HTMLElement>(".product");
+    if (!slider || !card) return;
+    slider.scrollBy({ left: direction * (card.offsetWidth + 20), behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    if (sliderPaused || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const timer = window.setInterval(() => {
+      const slider = productSlider.current;
+      if (!slider) return;
+      const atEnd = slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - 12;
+      if (atEnd) slider.scrollTo({ left: 0, behavior: "smooth" });
+      else slideProducts(1);
+    }, 3800);
+    return () => window.clearInterval(timer);
+  }, [sliderPaused]);
 
   return <main>
     <AnimatePresence>{!loaded && <motion.div className="loader" exit={{ y: "-100%" }} transition={{ duration: .7, ease: [0.76,0,0.24,1] }}>
@@ -97,7 +118,8 @@ export default function Home() {
     <section className="section menu-section" id="menu">
       <motion.div {...reveal} className="section-head"><p className="eyebrow">CHOOSE YOUR SLICE</p><h2>WHAT ARE YOU<br/><em>CRAVING?</em></h2><p>Choose your favourite and make it yours.</p></motion.div>
       <div className="tabs" role="tablist">{["Signature Pizzas","Classic Pizzas","Veggie","Sides","Drinks","Desserts"].map((x,i)=><button role="tab" aria-selected={i===0} key={x}>{x}</button>)}</div>
-      <div className="product-grid">{products.map((p,i)=><motion.article {...reveal} className="product" key={p[0]}>
+      <div className="slider-toolbar"><span>Swipe to explore</span><div><button aria-label="Previous pizzas" onClick={() => slideProducts(-1)}><ChevronLeft/></button><button aria-label="Next pizzas" onClick={() => slideProducts(1)}><ChevronRight/></button></div></div>
+      <div className="product-grid" ref={productSlider} onPointerEnter={() => setSliderPaused(true)} onPointerLeave={() => setSliderPaused(false)} onFocusCapture={() => setSliderPaused(true)} onBlurCapture={() => setSliderPaused(false)}>{products.map((p,i)=><motion.article initial={{opacity:0,x:70}} whileInView={{opacity:1,x:0}} viewport={{once:true,amount:.2}} transition={{duration:.55,delay:Math.min(i*.08,.3)}} className="product" key={p[0]}>
         <span className="tag">{p[3]}</span><div className="pizza-frame"><Image src="/images/pizza-full.png" alt={p[0]} width={420} height={420}/></div><h3>{p[0]}</h3><p>{p[1]}</p><div><strong>{p[2]}</strong><button aria-label={`Add ${p[0]} to cart`} onClick={() => {updateCart(p[0],1);setCartOpen(true)}}>Add <ShoppingBag size={17}/></button></div><button className="customise" onClick={() => {updateCart(p[0],1);setCartOpen(true)}}>Customise →</button>
       </motion.article>)}</div>
     </section>
