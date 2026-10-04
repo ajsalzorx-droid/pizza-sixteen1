@@ -5,14 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUpRight, Camera, ChevronLeft, ChevronRight, MapPin, Menu, Minus, Phone, Pizza, Plus, ShoppingBag, Star, Trash2, X } from "lucide-react";
 
-const products = [
-  ["Sixteen Special", "Pepperoni, mozzarella, olives, green peppers and signature sauce.", "AED 49", "Signature"],
-  ["Classic Pepperoni", "Loaded pepperoni, mozzarella and rich tomato sauce.", "AED 42", "Classic"],
-  ["Margherita", "Fresh mozzarella, tomato sauce and basil.", "AED 36", "Veggie"],
-  ["Spicy Chicken", "Spiced chicken, jalapeños, onions and mozzarella.", "AED 46", "Hot"],
-  ["Veggie Supreme", "Olives, peppers, mushrooms, onions and fresh herbs.", "AED 41", "Veggie"],
-  ["Four Cheese", "Mozzarella, cheddar, parmesan and creamy cheese sauce.", "AED 44", "Cheesy"],
-];
+import { menuItems, categories, orderName } from "./menu-data";
+const products = menuItems.flatMap(item => item.options.filter(option => option.price !== null).map(option => [orderName(item, option), item.description, 'AED ' + option.price, item.category, item.image]));
 
 const reviews = [
   ["Maya", "Dubai", "The crust was perfectly crispy and the toppings were incredibly fresh."],
@@ -27,6 +21,8 @@ function Marquee({ children, reverse = false }: { children: React.ReactNode; rev
 }
 
 export default function Home() {
+  const [activeCategory, setActiveCategory] = useState("Pizza");
+  const [selectedOptions, setSelectedOptions] = useState<Record<string, number>>({});
   const [menuOpen, setMenuOpen] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -56,7 +52,7 @@ export default function Home() {
     window.history.scrollRestoration = "manual";
     document.body.style.overflow = "hidden";
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-    setScrolled(false);
+
     const timer = setTimeout(() => setLoaded(true), 1500);
     const onScroll = () => setScrolled(window.scrollY > 80);
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -122,7 +118,7 @@ export default function Home() {
     <AnimatePresence>{cartOpen && <><motion.button className="cart-backdrop" aria-label="Close cart" onClick={() => setCartOpen(false)} initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}/><motion.aside className="cart-drawer" role="dialog" aria-modal="true" aria-labelledby="cart-title" initial={{x:"100%"}} animate={{x:0}} exit={{x:"100%"}} transition={{type:"spring",damping:28,stiffness:260}}>
       <div className="cart-head"><div><p className="eyebrow">YOUR ORDER</p><h2 id="cart-title">CART <span>({cartCount})</span></h2></div><button aria-label="Close cart" onClick={() => setCartOpen(false)}><X/></button></div>
       {cartItems.length === 0 ? <div className="empty-cart"><Pizza size={64}/><h3>YOUR CART IS HUNGRY.</h3><p>Add a pizza and we’ll get the oven ready.</p><button className="button" onClick={() => {setCartOpen(false);document.querySelector("#menu")?.scrollIntoView()}}>Explore menu</button></div> : <>
-        <div className="cart-items">{cartItems.map(({product,quantity}) => <article key={product[0]}><Image src="/images/pizza-full.png" alt="" width={76} height={76}/><div><h3>{product[0]}</h3><p>{product[2]}</p><div className="quantity"><button aria-label={`Remove one ${product[0]}`} onClick={() => updateCart(product[0],-1)}><Minus size={15}/></button><b>{quantity}</b><button aria-label={`Add one ${product[0]}`} onClick={() => updateCart(product[0],1)}><Plus size={15}/></button></div></div><button className="remove-item" aria-label={`Remove ${product[0]} from cart`} onClick={() => setCart(current => {const next={...current};delete next[product[0]];return next})}><Trash2 size={18}/></button></article>)}</div>
+        <div className="cart-items">{cartItems.map(({product,quantity}) => <article key={product[0]}>{product[4] ? <Image src={product[4]} alt="" width={76} height={76}/> : <div className="cart-photo-placeholder">☕</div>}<div><h3>{product[0]}</h3><p>{product[2]}</p><div className="quantity"><button aria-label={`Remove one ${product[0]}`} onClick={() => updateCart(product[0],-1)}><Minus size={15}/></button><b>{quantity}</b><button aria-label={`Add one ${product[0]}`} onClick={() => updateCart(product[0],1)}><Plus size={15}/></button></div></div><button className="remove-item" aria-label={`Remove ${product[0]} from cart`} onClick={() => setCart(current => {const next={...current};delete next[product[0]];return next})}><Trash2 size={18}/></button></article>)}</div>
         <div className="cart-summary"><div><span>Subtotal</span><strong>AED {cartTotal}</strong></div><small>Delivery fee confirmed on WhatsApp.</small><a className="button whatsapp" href={whatsAppOrder} target="_blank" rel="noopener noreferrer"><Image className="whatsapp-icon" src="/images/whatsapp-icon.png" alt="" width={24} height={24}/> Checkout on WhatsApp <ArrowUpRight size={18}/></a><a className="call-order" href="tel:+971543962660"><Phone size={17}/> Or call +971 54 396 2660</a></div>
       </>}
     </motion.aside></>}</AnimatePresence>
@@ -149,11 +145,18 @@ export default function Home() {
 
     <section className="section menu-section" id="menu">
       <motion.div {...reveal} className="section-head"><p className="eyebrow">CHOOSE YOUR SLICE</p><h2>WHAT ARE YOU<br/><em>CRAVING?</em></h2><p>Choose your favourite and make it yours.</p></motion.div>
-      <div className="tabs" role="tablist">{["Signature Pizzas","Classic Pizzas","Veggie","Sides","Drinks","Desserts"].map((x,i)=><button role="tab" aria-selected={i===0} key={x}>{x}</button>)}</div>
-      <div className="slider-toolbar"><span>Swipe to explore</span><div><button aria-label="Previous pizzas" onClick={() => slideProducts(-1)}><ChevronLeft/></button><button aria-label="Next pizzas" onClick={() => slideProducts(1)}><ChevronRight/></button></div></div>
-      <div className="product-grid" ref={productSlider} onPointerEnter={() => setSliderPaused(true)} onPointerLeave={() => setSliderPaused(false)} onFocusCapture={() => setSliderPaused(true)} onBlurCapture={() => setSliderPaused(false)}>{products.map((p,i)=><motion.article initial={{opacity:0,x:70}} whileInView={{opacity:1,x:0}} viewport={{once:true,amount:.2}} transition={{duration:.55,delay:Math.min(i*.08,.3)}} className="product" key={p[0]}>
-        <span className="tag">{p[3]}</span><div className="pizza-frame"><Image src="/images/pizza-full.png" alt={p[0]} width={420} height={420}/></div><h3>{p[0]}</h3><p>{p[1]}</p><div><strong>{p[2]}</strong><button aria-label={`Add ${p[0]} to cart`} onClick={() => {updateCart(p[0],1);setCartOpen(true)}}>Add <ShoppingBag size={17}/></button></div><button className="customise" onClick={() => {updateCart(p[0],1);setCartOpen(true)}}>Customise →</button>
-      </motion.article>)}</div>
+      <div className="tabs" aria-label="Menu categories">{categories.map(category => <button aria-pressed={activeCategory === category} key={category} onClick={() => {setActiveCategory(category);productSlider.current?.scrollTo({left:0,behavior:"instant"})}}>{category}</button>)}</div>
+      <div className="slider-toolbar"><span>{activeCategory} · {menuItems.filter(item => item.category === activeCategory).length} items</span><div><button aria-label="Previous menu items" onClick={() => slideProducts(-1)}><ChevronLeft/></button><button aria-label="Next menu items" onClick={() => slideProducts(1)}><ChevronRight/></button></div></div>
+      <div className="product-grid" ref={productSlider} onPointerEnter={() => setSliderPaused(true)} onPointerLeave={() => setSliderPaused(false)} onFocusCapture={() => setSliderPaused(true)} onBlurCapture={() => setSliderPaused(false)}>{menuItems.filter(item => item.category === activeCategory).map(item => {
+        const option = item.options[selectedOptions[item.name] || 0];
+        return <article className="product menu-product" key={item.name}>
+          <div className="pizza-frame">{item.image ? <Image src={item.image} alt={item.name} width={540} height={540} sizes="(max-width: 600px) 82vw, (max-width: 900px) 45vw, 30vw"/> : <div className="menu-photo-placeholder"><span aria-hidden="true">☕</span><span>{item.name}</span></div>}</div>
+          <h3>{item.name}</h3>
+          {item.description && <p>{item.description}</p>}
+          {item.options.length > 1 && <label className="menu-option">{item.category === "Pizza" ? "Size" : "Price option"}<select aria-label={item.name + " option"} value={selectedOptions[item.name] || 0} onChange={event => setSelectedOptions(current => ({...current,[item.name]:Number(event.target.value)}))}>{item.options.map((choice,index) => <option key={choice.label} value={index}>{item.category === "Pizza" ? choice.label + " — AED " + choice.price : choice.label}</option>)}</select></label>}
+          <div className="menu-product-actions"><strong>{option.price === null ? "Ask for price" : "AED " + option.price}</strong>{option.price === null ? <a href={"https://wa.me/971543962660?text=" + encodeURIComponent("Hello! What is the price of " + item.name + "?")} target="_blank" rel="noopener noreferrer">Enquire <ArrowUpRight size={17}/></a> : <button aria-label={"Add " + orderName(item,option) + " to cart"} onClick={() => {updateCart(orderName(item,option),1);setCartOpen(true)}}>Add <ShoppingBag size={17}/></button>}</div>
+        </article>;
+      })}</div>
     </section>
 
     <section className="assembly">
@@ -166,7 +169,7 @@ export default function Home() {
 
     <div className="benefits"><Marquee>FRESH INGREDIENTS ✦ FRESH INGREDIENTS ✦ </Marquee><Marquee reverse>HOT FROM THE OVEN ✦ HOT FROM THE OVEN ✦ </Marquee><Marquee>DELIVERED FAST ✦ DELIVERED FAST ✦ </Marquee></div>
 
-    <section className="favorites section"><motion.div {...reveal} className="section-head"><p className="eyebrow">THE BESTSELLERS</p><h2>THE SIXTEEN<br/><em>FAVOURITES.</em></h2></motion.div><div className="slider-toolbar favorites-toolbar"><span>Slide through the favourites</span><div><button aria-label="Previous favourites" onClick={() => slideFavorites(-1)}><ChevronLeft/></button><button aria-label="Next favourites" onClick={() => slideFavorites(1)}><ChevronRight/></button></div></div><div className="favorite-row" ref={favoritesSlider} onPointerEnter={() => setFavoritesPaused(true)} onPointerLeave={() => setFavoritesPaused(false)} onFocusCapture={() => setFavoritesPaused(true)} onBlurCapture={() => setFavoritesPaused(false)}>{products.slice(0,5).map((p,i)=><motion.article initial={{opacity:0,x:90,rotate:1.5}} whileInView={{opacity:1,x:0,rotate:0}} viewport={{once:true,amount:.2}} transition={{duration:.6,delay:Math.min(i*.08,.28)}} key={p[0]}><span>0{i+1}/05</span><Image src="/images/pizza-full.png" alt={p[0]} width={500} height={500}/><h3>{p[0]}</h3><p>{p[1]}</p><a className="button small" href="#order">Order {p[2]}</a></motion.article>)}</div></section>
+    <section className="favorites section"><motion.div {...reveal} className="section-head"><p className="eyebrow">THE BESTSELLERS</p><h2>THE SIXTEEN<br/><em>FAVOURITES.</em></h2></motion.div><div className="slider-toolbar favorites-toolbar"><span>Slide through the favourites</span><div><button aria-label="Previous favourites" onClick={() => slideFavorites(-1)}><ChevronLeft/></button><button aria-label="Next favourites" onClick={() => slideFavorites(1)}><ChevronRight/></button></div></div><div className="favorite-row" ref={favoritesSlider} onPointerEnter={() => setFavoritesPaused(true)} onPointerLeave={() => setFavoritesPaused(false)} onFocusCapture={() => setFavoritesPaused(true)} onBlurCapture={() => setFavoritesPaused(false)}>{products.filter(p => p[0].endsWith("— Medium")).slice(0,5).map((p,i)=><motion.article initial={{opacity:0,x:90,rotate:1.5}} whileInView={{opacity:1,x:0,rotate:0}} viewport={{once:true,amount:.2}} transition={{duration:.6,delay:Math.min(i*.08,.28)}} key={p[0]}><span>0{i+1}/05</span><Image src={p[4]} alt={p[0]} width={500} height={500}/><h3>{p[0]}</h3><p>{p[1]}</p><a className="button small" href="#order">Order {p[2]}</a></motion.article>)}</div></section>
 
     <section className="offer" id="offers"><motion.div {...reveal}><p className="eyebrow">THIS WEEK’S BIG DEAL</p><h2>BUY 1 LARGE,<br/>GET THE SECOND<br/><em>50% OFF.</em></h2><p>Double the pizza. Double the good times.</p><a className="button light" href="#order">Get the offer <ArrowUpRight/></a><small>Equal or lower-priced pizza only. Terms apply.</small></motion.div><motion.div className="offer-image" whileInView={{y:-30,rotate:4}} transition={{duration:1}}><Image src="/images/pizza-floating.png" alt="Pizza Sixteen offer" width={750} height={900}/><b>50%<br/>OFF</b></motion.div></section>
 
