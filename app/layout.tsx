@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Anton, Manrope } from "next/font/google";
+import "lenis/dist/lenis.css";
 import "./globals.css";
 
 const anton = Anton({ weight: "400", subsets: ["latin"], variable: "--font-display" });
@@ -15,5 +16,5 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const schema = { "@context":"https://schema.org", "@type":"Restaurant", name:"Pizza Sixteen", image:"/images/pizza-box.png", servesCuisine:"Pizza", address:{"@type":"PostalAddress",addressLocality:"Dubai",addressCountry:"AE"}, openingHours:"Su-Sa 11:00-01:00", telephone:"+971-XX-XXX-XXXX", priceRange:"AED 36-49" };
-  return <html lang="en"><body className={`${anton.variable} ${manrope.variable}`}><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema)}}/>{children}</body></html>;
+  return <html lang="en" suppressHydrationWarning><body className={`${anton.variable} ${manrope.variable}`} suppressHydrationWarning><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema)}}/>{children}</body></html>;
 }

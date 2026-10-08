@@ -3,9 +3,11 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import type Lenis from "lenis";
 import { ArrowUpRight, Camera, ChevronLeft, ChevronRight, MapPin, Menu, Minus, Phone, Pizza, Plus, ShoppingBag, Star, Trash2, X } from "lucide-react";
 
 import { menuItems, categories, orderName } from "./menu-data";
+import OptionSelect from "./option-select";
 const products = menuItems.flatMap(item => item.options.filter(option => option.price !== null).map(option => [orderName(item, option), item.description, 'AED ' + option.price, item.category, item.image]));
 
 const reviews = [
@@ -25,6 +27,7 @@ export default function Home() {
   const [selectedOptions, setSelectedOptions] = useState<Record<string, number>>({});
   const [menuOpen, setMenuOpen] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [introDone, setIntroDone] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [email, setEmail] = useState("");
   const [joined, setJoined] = useState(false);
@@ -34,6 +37,7 @@ export default function Home() {
   const [favoritesPaused, setFavoritesPaused] = useState(false);
   const productSlider = useRef<HTMLDivElement>(null);
   const favoritesSlider = useRef<HTMLDivElement>(null);
+  const lenisRef = useRef<Lenis | null>(null);
 
   const cartItems = products.filter(p => cart[p[0]]).map(p => ({ product: p, quantity: cart[p[0]] }));
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
@@ -63,6 +67,21 @@ export default function Home() {
       window.history.scrollRestoration = previousRestoration;
     };
   }, []);
+
+  // Smooth scrolling starts once the loader has gone; Lenis is lazy-loaded so it stays out of the initial bundle.
+  useEffect(() => {
+    if (!introDone || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let cancelled = false;
+    import("lenis").then(({ default: Lenis }) => {
+      if (cancelled) return;
+      lenisRef.current = new Lenis({ autoRaf: true, anchors: true });
+    });
+    return () => {
+      cancelled = true;
+      lenisRef.current?.destroy();
+      lenisRef.current = null;
+    };
+  }, [introDone]);
 
   const slideProducts = (direction: 1 | -1) => {
     const slider = productSlider.current;
@@ -103,7 +122,7 @@ export default function Home() {
   }, [favoritesPaused]);
 
   return <main>
-    <AnimatePresence onExitComplete={() => { document.body.style.overflow = ""; window.scrollTo({top:0,left:0,behavior:"auto"}) }}>{!loaded && <motion.div className="loader" exit={{ y: "-100%" }} transition={{ duration: .7, ease: [0.76,0,0.24,1] }}>
+    <AnimatePresence onExitComplete={() => { document.body.style.overflow = ""; window.scrollTo({top:0,left:0,behavior:"auto"}); setIntroDone(true) }}>{!loaded && <motion.div className="loader" exit={{ y: "-100%" }} transition={{ duration: .7, ease: [0.76,0,0.24,1] }}>
       <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity, ease: "linear" }} className="loader-pizza"><Pizza /></motion.div>
       <Image src="/images/pizza-sixteen-logo.png" alt="Pizza Sixteen" width={240} height={240} priority />
       <strong>HEATING THE OVEN...</strong><div className="loadbar"><i /></div>
@@ -115,15 +134,15 @@ export default function Home() {
       <div className="nav-actions"><a className="icon-link" href="tel:+971543962660" aria-label="Call Pizza Sixteen"><Phone size={18}/></a><button className="cart-trigger" aria-label={`Open cart with ${cartCount} items`} onClick={() => setCartOpen(true)}><ShoppingBag size={19}/>{cartCount > 0 && <span>{cartCount}</span>}</button><button className="button small" onClick={() => setCartOpen(true)}>Order now <ArrowUpRight size={17}/></button><button className="menu-button" aria-label="Open menu" onClick={() => setMenuOpen(true)}><Menu /></button></div>
     </header>
 
-    <AnimatePresence>{cartOpen && <><motion.button className="cart-backdrop" aria-label="Close cart" onClick={() => setCartOpen(false)} initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}/><motion.aside className="cart-drawer" role="dialog" aria-modal="true" aria-labelledby="cart-title" initial={{x:"100%"}} animate={{x:0}} exit={{x:"100%"}} transition={{type:"spring",damping:28,stiffness:260}}>
+    <AnimatePresence>{cartOpen && <><motion.button className="cart-backdrop" aria-label="Close cart" onClick={() => setCartOpen(false)} initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}/><motion.aside className="cart-drawer" data-lenis-prevent role="dialog" aria-modal="true" aria-labelledby="cart-title" initial={{x:"100%"}} animate={{x:0}} exit={{x:"100%"}} transition={{type:"spring",damping:28,stiffness:260}}>
       <div className="cart-head"><div><p className="eyebrow">YOUR ORDER</p><h2 id="cart-title">CART <span>({cartCount})</span></h2></div><button aria-label="Close cart" onClick={() => setCartOpen(false)}><X/></button></div>
-      {cartItems.length === 0 ? <div className="empty-cart"><Pizza size={64}/><h3>YOUR CART IS HUNGRY.</h3><p>Add a pizza and we’ll get the oven ready.</p><button className="button" onClick={() => {setCartOpen(false);document.querySelector("#menu")?.scrollIntoView()}}>Explore menu</button></div> : <>
+      {cartItems.length === 0 ? <div className="empty-cart"><Pizza size={64}/><h3>YOUR CART IS HUNGRY.</h3><p>Add a pizza and we’ll get the oven ready.</p><button className="button" onClick={() => {setCartOpen(false);if (lenisRef.current) lenisRef.current.scrollTo("#menu"); else document.querySelector("#menu")?.scrollIntoView()}}>Explore menu</button></div> : <>
         <div className="cart-items">{cartItems.map(({product,quantity}) => <article key={product[0]}>{product[4] ? <Image src={product[4]} alt="" width={76} height={76}/> : <div className="cart-photo-placeholder">☕</div>}<div><h3>{product[0]}</h3><p>{product[2]}</p><div className="quantity"><button aria-label={`Remove one ${product[0]}`} onClick={() => updateCart(product[0],-1)}><Minus size={15}/></button><b>{quantity}</b><button aria-label={`Add one ${product[0]}`} onClick={() => updateCart(product[0],1)}><Plus size={15}/></button></div></div><button className="remove-item" aria-label={`Remove ${product[0]} from cart`} onClick={() => setCart(current => {const next={...current};delete next[product[0]];return next})}><Trash2 size={18}/></button></article>)}</div>
         <div className="cart-summary"><div><span>Subtotal</span><strong>AED {cartTotal}</strong></div><small>Delivery fee confirmed on WhatsApp.</small><a className="button whatsapp" href={whatsAppOrder} target="_blank" rel="noopener noreferrer"><Image className="whatsapp-icon" src="/images/whatsapp-icon.png" alt="" width={24} height={24}/> Checkout on WhatsApp <ArrowUpRight size={18}/></a><a className="call-order" href="tel:+971543962660"><Phone size={17}/> Or call +971 54 396 2660</a></div>
       </>}
     </motion.aside></>}</AnimatePresence>
 
-    <AnimatePresence>{menuOpen && <motion.aside className="mobile-menu" initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }}>
+    <AnimatePresence>{menuOpen && <motion.aside className="mobile-menu" data-lenis-prevent initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }}>
       <button aria-label="Close menu" onClick={() => setMenuOpen(false)}><X size={30}/></button>
       <Image src="/images/pizza-sixteen-logo.png" alt="Pizza Sixteen" width={180} height={140}/>
       {["Home","Menu","Our story","Offers","Locations"].map(x => <a key={x} href={`#${x.toLowerCase().replace(" ","")}`} onClick={() => setMenuOpen(false)}>{x}</a>)}
@@ -153,7 +172,7 @@ export default function Home() {
           <div className="pizza-frame">{item.image ? <Image src={item.image} alt={item.name} width={540} height={540} sizes="(max-width: 600px) 82vw, (max-width: 900px) 45vw, 30vw"/> : <div className="menu-photo-placeholder"><span aria-hidden="true">☕</span><span>{item.name}</span></div>}</div>
           <h3>{item.name}</h3>
           {item.description && <p>{item.description}</p>}
-          {item.options.length > 1 && <label className="menu-option">{item.category === "Pizza" ? "Size" : "Price option"}<select aria-label={item.name + " option"} value={selectedOptions[item.name] || 0} onChange={event => setSelectedOptions(current => ({...current,[item.name]:Number(event.target.value)}))}>{item.options.map((choice,index) => <option key={choice.label} value={index}>{item.category === "Pizza" ? choice.label + " — AED " + choice.price : choice.label}</option>)}</select></label>}
+          {item.options.length > 1 && <label className="menu-option">{item.category === "Pizza" ? "Size" : "Price option"}<OptionSelect ariaLabel={item.name + " option"} value={selectedOptions[item.name] || 0} onChange={index => setSelectedOptions(current => ({...current,[item.name]:index}))} options={item.options.map(choice => item.category === "Pizza" ? choice.label + " — AED " + choice.price : choice.label)}/></label>}
           <div className="menu-product-actions"><strong>{option.price === null ? "Ask for price" : "AED " + option.price}</strong>{option.price === null ? <a href={"https://wa.me/971543962660?text=" + encodeURIComponent("Hello! What is the price of " + item.name + "?")} target="_blank" rel="noopener noreferrer">Enquire <ArrowUpRight size={17}/></a> : <button aria-label={"Add " + orderName(item,option) + " to cart"} onClick={() => {updateCart(orderName(item,option),1);setCartOpen(true)}}>Add <ShoppingBag size={17}/></button>}</div>
         </article>;
       })}</div>
@@ -179,7 +198,7 @@ export default function Home() {
 
     <section className="reviews section"><motion.div {...reveal} className="section-head"><p className="eyebrow">PEOPLE ARE TALKING</p><h2>LOVE AT<br/><em>FIRST SLICE.</em></h2></motion.div><div className="review-grid">{reviews.map(r=><article key={r[0]}><div className="stars">{[1,2,3,4,5].map(x=><Star key={x} fill="currentColor" size={18}/>)}</div><blockquote>“{r[2]}”</blockquote><div><b>{r[0]}</b><span>{r[1]}</span></div></article>)}</div></section>
 
-    <section className="social section"><motion.div {...reveal} className="section-head"><p className="eyebrow">@PIZZASIXTEEN</p><h2>FOLLOW THE<br/><em>CHEESY MOMENTS.</em></h2></motion.div><div className="gallery">{["pizza-full.png","pizza-box.png","pizza-floating.png","pizza-full.png","pizza-box.png"].map((src,i)=><div key={i}><Image src={`/images/${src}`} alt="Pizza Sixteen social moment" fill sizes="(max-width: 700px) 50vw, 25vw"/><Camera/></div>)}</div><a className="button outline" href="#">Follow on Instagram <Camera size={18}/></a></section>
+    <section className="social section"><motion.div {...reveal} className="section-head"><p className="eyebrow">@PIZZASIXTEEN</p><h2>FOLLOW THE<br/><em>CHEESY MOMENTS.</em></h2></motion.div><div className="gallery">{["pizza-full-gallery.png","pizza-box.png","pizza-floating-gallery.png","pizza-full-gallery.png","pizza-box.png"].map((src,i)=><div key={i}><Image className={src === "pizza-box.png" ? undefined : "cutout"} src={`/images/${src}`} alt="Pizza Sixteen social moment" fill sizes="(max-width: 700px) 50vw, 25vw"/><Camera/></div>)}</div><a className="button outline" href="#">Follow on Instagram <Camera size={18}/></a></section>
 
     <section className="locations section" id="locations"><motion.div {...reveal}><p className="eyebrow">DUBAI, UAE</p><h2>FIND YOUR<br/><em>NEAREST SLICE.</em></h2><p>Sunday–Thursday: 11:00 AM–1:00 AM<br/>Friday–Saturday: 11:00 AM–2:00 AM</p><div className="hero-buttons"><a className="button" href="https://maps.app.goo.gl/XjJHddAN3T2N6BVg7" target="_blank" rel="noopener noreferrer" aria-label="Open Pizza Sixteen shop location in Google Maps">Get directions</a><a className="button outline" href="tel:+971543962660">Call store</a></div></motion.div><div className="map"><iframe title="Pizza Sixteen shop location on Google Maps" src="https://www.google.com/maps?q=25.0441708,55.1943251&z=16&output=embed" loading="lazy" allowFullScreen referrerPolicy="no-referrer-when-downgrade"/><a className="map-pin-card" href="https://maps.app.goo.gl/XjJHddAN3T2N6BVg7" target="_blank" rel="noopener noreferrer"><MapPin size={28}/><b>PIZZA SIXTEEN</b><span>Open in Maps</span></a><i/><i/><i/></div></section>
 
