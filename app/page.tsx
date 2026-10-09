@@ -16,6 +16,7 @@ const reviews = [
   ["Sara", "Business Bay", "Hot, cheesy and delivered quickly. Exactly what pizza should be."],
 ];
 
+
 const deliveryApps = [
   ["Talabat", "talabat", "https://www.talabat.com/uae"],
   ["Deliveroo", "deliveroo", "https://deliveroo.ae/en/"],
