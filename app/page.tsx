@@ -16,22 +16,21 @@ const reviews = [
   ["Sara", "Business Bay", "Hot, cheesy and delivered quickly. Exactly what pizza should be."],
 ];
 
-// NEXT_PUBLIC_* vars must be referenced literally so Next.js can inline them at build time.
 const deliveryApps = [
-  ["Talabat", "talabat", process.env.NEXT_PUBLIC_TALABAT_URL],
-  ["Deliveroo", "deliveroo", process.env.NEXT_PUBLIC_DELIVEROO_URL],
-  ["Careem", "careem", process.env.NEXT_PUBLIC_CAREEM_URL],
-  ["Noon Food", "noon", process.env.NEXT_PUBLIC_NOON_FOOD_URL],
-  ["Keeta", "keeta", process.env.NEXT_PUBLIC_KEETA_URL],
-  ["Smiles", "smiles", process.env.NEXT_PUBLIC_SMILES_URL],
-].filter((app): app is string[] => Boolean(app[2]));
+  ["Talabat", "talabat", "https://www.talabat.com/uae"],
+  ["Deliveroo", "deliveroo", "https://deliveroo.ae/en/"],
+  ["Careem", "careem", "https://link.careem.com/Jo08yVSENAhte"],
+  ["Noon Food", "noon", "https://www.noon.com/uae-en/grocery-store/breakfast-foods/"],
+  ["Keeta", "keeta", "https://m.keeta-global.com/marketing/applaunch/index.html?qrcode_id=1jaotwuw&utm_campaign=merchant&utm_medium=branding&inner_url=sailorc%3A%2F%2Fkeeta.com%2FmarketTransfer%2Fmachpro%3Fmach_bundle_name%3Dmach_pro_sailor_c_shop%26shopId%3D100757321&url_id=shop_share_link&region=BH&locale=en&openType=appLaunch&utm_source=organic&utm_content=merchantsharelink"],
+  ["Smiles", "smiles", "https://smiles.ae/en/index.html"],
+];
 
 const reveal = { initial: { opacity: 0, y: 36 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, margin: "-80px" }, transition: { duration: .65 } };
 
 function Marquee({ children, reverse = false }: { children: React.ReactNode; reverse?: boolean }) {
   return <div className={`marquee ${reverse ? "reverse" : ""}`}><div>{children}<span aria-hidden="true">{children}</span></div></div>;
 }
-console.log("ssa");
+
 
 
 export default function Home() {
