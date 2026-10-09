@@ -7,7 +7,6 @@ import type Lenis from "lenis";
 import { ArrowUpRight, Camera, ChevronLeft, ChevronRight, MapPin, Menu, Minus, Phone, Pizza, Plus, ShoppingBag, Star, Trash2, X } from "lucide-react";
 
 import { menuItems, categories, orderName } from "./menu-data";
-import OptionSelect from "./option-select";
 const products = menuItems.flatMap(item => item.options.filter(option => option.price !== null).map(option => [orderName(item, option), item.description, 'AED ' + option.price, item.category, item.image]));
 
 const reviews = [
@@ -184,7 +183,7 @@ export default function Home() {
           <div className="pizza-frame">{item.image ? <Image src={item.image} alt={item.name} width={540} height={540} sizes="(max-width: 600px) 82vw, (max-width: 900px) 45vw, 30vw" /> : <div className="menu-photo-placeholder"><span aria-hidden="true">☕</span><span>{item.name}</span></div>}</div>
           <h3>{item.name}</h3>
           {item.description && <p>{item.description}</p>}
-          {item.options.length > 1 && <label className="menu-option">{item.category === "Pizza" ? "Size" : "Price option"}<OptionSelect ariaLabel={item.name + " option"} value={selectedOptions[item.name] || 0} onChange={index => setSelectedOptions(current => ({ ...current, [item.name]: index }))} options={item.options.map(choice => item.category === "Pizza" ? choice.label + " — AED " + choice.price : choice.label)} /></label>}
+          {item.options.length > 1 && <div className="menu-option"><span>{item.category === "Pizza" ? "Size" : "Price option"}</span><div className="size-boxes" role="radiogroup" aria-label={item.name + " option"}>{item.options.map((choice, index) => <button key={choice.label} type="button" role="radio" aria-label={choice.label} aria-checked={(selectedOptions[item.name] || 0) === index} onClick={() => setSelectedOptions(current => ({ ...current, [item.name]: index }))}><b>{item.category === "Pizza" ? choice.label.charAt(0) : choice.label}</b></button>)}</div></div>}
           <div className="menu-product-actions"><strong>{option.price === null ? "Ask for price" : "AED " + option.price}</strong>{option.price === null ? <a href={"https://wa.me/971543962660?text=" + encodeURIComponent("Hello! What is the price of " + item.name + "?")} target="_blank" rel="noopener noreferrer">Enquire <ArrowUpRight size={17} /></a> : <button aria-label={"Add " + orderName(item, option) + " to cart"} onClick={() => { updateCart(orderName(item, option), 1); setCartOpen(true) }}>Add <ShoppingBag size={17} /></button>}</div>
         </article>;
       })}</div>
