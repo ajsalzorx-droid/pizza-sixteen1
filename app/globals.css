@@ -103,3 +103,11 @@ footer>img{width:190px;height:145px;background:transparent;border-radius:0;objec
 @media(max-width:600px){.loader-pizza svg{width:190px;height:190px}.loader-pizza{top:max(0px,calc(50% - 330px))}}
 @media(max-width:900px){footer{border-radius:0;padding-top:84px}}
 .menu-option select{cursor:pointer}
+.floating-delivery{position:fixed;right:20px;top:50%;transform:translateY(-50%);z-index:90;display:flex;flex-direction:column;gap:10px}
+.floating-delivery a{position:relative;display:block;width:46px;height:46px;border-radius:14px;animation:delivery-in .45s cubic-bezier(.22,1,.36,1) backwards;transition:transform .2s}
+.floating-delivery a:hover,.floating-delivery a:focus-visible{transform:scale(1.1)}
+.floating-delivery img{width:100%;height:100%;border-radius:inherit;display:block;box-shadow:0 6px 16px #17171740}
+.floating-delivery span{position:absolute;right:calc(100% + 14px);top:50%;transform:translate(6px,-50%);background:var(--ink);color:white;font-size:12px;font-weight:800;text-transform:uppercase;white-space:nowrap;padding:6px 10px;border-radius:8px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s}
+.floating-delivery a:hover span,.floating-delivery a:focus-visible span{opacity:1;transform:translate(0,-50%)}
+@keyframes delivery-in{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
+@media(max-width:600px){.floating-delivery{right:8px;gap:6px}.floating-delivery a{width:30px;height:30px;border-radius:9px}.floating-delivery span{display:none}}

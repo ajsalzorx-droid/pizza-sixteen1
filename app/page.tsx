@@ -16,6 +16,16 @@ const reviews = [
   ["Sara", "Business Bay", "Hot, cheesy and delivered quickly. Exactly what pizza should be."],
 ];
 
+// NEXT_PUBLIC_* vars must be referenced literally so Next.js can inline them at build time.
+const deliveryApps = [
+  ["Talabat", "talabat", process.env.NEXT_PUBLIC_TALABAT_URL],
+  ["Deliveroo", "deliveroo", process.env.NEXT_PUBLIC_DELIVEROO_URL],
+  ["Careem", "careem", process.env.NEXT_PUBLIC_CAREEM_URL],
+  ["Noon Food", "noon", process.env.NEXT_PUBLIC_NOON_FOOD_URL],
+  ["Keeta", "keeta", process.env.NEXT_PUBLIC_KEETA_URL],
+  ["Smiles", "smiles", process.env.NEXT_PUBLIC_SMILES_URL],
+].filter((app): app is string[] => Boolean(app[2]));
+
 const reveal = { initial: { opacity: 0, y: 36 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, margin: "-80px" }, transition: { duration: .65 } };
 
 function Marquee({ children, reverse = false }: { children: React.ReactNode; reverse?: boolean }) {
@@ -206,5 +216,6 @@ export default function Home() {
 
     <footer><Image src="/images/pizza-sixteen-logo-footer.png" alt="Pizza Sixteen" width={250} height={218}/><div><b>HOT • FRESH • CHEESY</b><p>Bold flavours, fresh ingredients and good times—one slice at a time.</p></div><div><a href="#menu">Menu</a><a href="#story">Our story</a><a href="#offers">Offers</a><a href="#locations">Locations</a></div><div><p>Dubai, UAE<br/><a href="tel:+971543962660">+971 54 396 2660</a><br/>11:00 AM – 1:00 AM</p></div><small>© 2026 Pizza Sixteen. All rights reserved. · Terms · Privacy</small></footer>
     {scrolled&&<div className="floating-order"><button onClick={() => setCartOpen(true)}><ShoppingBag/> <span>Cart {cartCount > 0 ? `(${cartCount})` : ""}</span></button><a href="https://wa.me/971543962660" target="_blank" rel="noopener noreferrer" aria-label="Order on WhatsApp"><Image className="whatsapp-icon" src="/images/whatsapp-icon.png" alt="" width={28} height={28}/></a></div>}
+    {deliveryApps.length>0&&<nav className="floating-delivery" aria-label="Order on delivery apps">{deliveryApps.map(([name,icon,url],i)=><a key={icon} href={url} target="_blank" rel="noopener noreferrer" aria-label={`Order on ${name}`} style={{animationDelay:`${i*60}ms`}}><Image src={`/images/delivery/${icon}.png`} alt="" width={48} height={48}/><span>{name}</span></a>)}</nav>}
   </main>;
 }
