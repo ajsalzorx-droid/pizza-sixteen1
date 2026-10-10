@@ -113,3 +113,11 @@ footer>img{width:190px;height:145px;background:transparent;border-radius:0;objec
 .floating-delivery a:hover span,.floating-delivery a:focus-visible span{opacity:1;transform:translate(0,-50%)}
 @keyframes delivery-in{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
 @media(max-width:600px){.floating-delivery{right:8px;gap:6px}.floating-delivery a{width:30px;height:30px;border-radius:9px}.floating-delivery span{display:none}}
+/* Floating WhatsApp button only: round, no yellow ring, on all screen sizes */
+.floating-order a{border:0}
+.floating-order a:last-child{width:52px;height:52px}
+@media(max-width:600px){.floating-order{left:auto;right:12px;display:flex;padding:0;background:none;border:0;box-shadow:none;backdrop-filter:none}
+.floating-order a:last-child{width:52px!important;height:52px!important}}
+/* Delivery apps stack just above the WhatsApp button (centred over it) */
+.floating-delivery{top:auto;bottom:84px;right:23px;transform:none}
+@media(max-width:600px){.floating-delivery{bottom:calc(max(10px,env(safe-area-inset-bottom)) + 62px);right:23px}}
